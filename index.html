@@ -1,146 +1,74 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Prompt Optimizer</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Prompt Optimizer</title>
+<link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-    <!-- Header -->
-    <header class="header">
-        <div class="container">
-            <h1 class="header__title">🤖 AI Prompt Optimizer</h1>
-            <p class="header__subtitle">Analyze, score, and improve your AI prompts</p>
-        </div>
-    </header>
 
-    <!-- Main Content -->
-    <main class="main">
-        <div class="container">
-            <!-- Input Section -->
-            <section class="analyzer-section">
-                <div class="card">
-                    <h2 class="card__title">Enter Your Prompt</h2>
-                    <p class="card__description">Paste your prompt below to get analysis, scoring, and improvement suggestions.</p>
-                    
-                    <form id="promptForm" class="form">
-                        <div class="form__group">
-                            <label for="promptInput" class="form__label">Your Prompt</label>
-                            <textarea 
-                                id="promptInput" 
-                                class="form__textarea" 
-                                placeholder="Enter a prompt (10-5000 characters)..."
-                                minlength="10"
-                                maxlength="5000"
-                                required
-                            ></textarea>
-                            <div class="form__hint">
-                                <span id="charCount">0</span> / 5000 characters
-                            </div>
-                        </div>
-                        
-                        <button type="submit" class="btn btn--primary">
-                            <span class="btn__text">Analyze Prompt</span>
-                            <span id="loadingSpinner" class="btn__spinner" style="display: none;">⏳</span>
-                        </button>
-                    </form>
-                </div>
-            </section>
+<div class="container">
 
-            <!-- Results Section (Hidden by default) -->
-            <section id="resultsSection" class="results-section" style="display: none;">
-                
-                <!-- Score Card -->
-                <div class="card card--highlight">
-                    <div class="score-display">
-                        <div class="score-circle">
-                            <span class="score-value" id="scoreValue">--</span>
-                            <span class="score-unit">%</span>
-                        </div>
-                        <div class="score-info">
-                            <h3 class="score-title">Quality Score</h3>
-                            <p class="score-description" id="scoreDescription">Analyzing...</p>
-                        </div>
-                    </div>
-                </div>
+<h1>🚀 AI Prompt Optimizer</h1>
 
-                <!-- Issues Card -->
-                <div class="card">
-                    <h3 class="card__title">📋 Issues Detected</h3>
-                    <div id="issuesList" class="issues-list">
-                        <!-- Issues populated by JavaScript -->
-                    </div>
-                </div>
-
-                <!-- Improved Prompt Card -->
-                <div class="card">
-                    <h3 class="card__title">✨ Improved Prompt (RTCEO Format)</h3>
-                    <div id="improvedPromptBox" class="improved-prompt">
-                        <!-- Improved prompt populated by JavaScript -->
-                    </div>
-                    <button id="copyButton" class="btn btn--secondary" style="margin-top: 1rem;">
-                        📋 Copy to Clipboard
-                    </button>
-                </div>
-
-<!-- agent.md Card -->
+<!-- INPUT -->
 <div class="card">
-    <h3 class="card__title">📄 Generated agent.md</h3>
+  <textarea id="desc" placeholder="Describe your project..."></textarea>
 
-    <pre id="agentMdBox" style="
-        background: #111;
-        color: #0f0;
-        padding: 10px;
-        border-radius: 5px;
-        white-space: pre-wrap;
-        margin-top: 10px;
-    "></pre>
+  <div class="grid">
+    <select id="frontend">
+      <option value="">Frontend</option>
+      <option>React</option>
+      <option>HTML/CSS/JS</option>
+    </select>
 
-    <button onclick="downloadMarkdown()" class="btn btn--secondary" style="margin-top: 1rem;">
-        📥 Download agent.md
-    </button>
+    <select id="backend">
+      <option value="">Backend</option>
+      <option>Spring Boot</option>
+      <option>Node.js</option>
+    </select>
+
+    <select id="database">
+      <option value="">Database</option>
+      <option>MySQL</option>
+      <option>MongoDB</option>
+    </select>
+  </div>
+
+  <button onclick="generate()">Generate</button>
 </div>
 
-                <!-- Action Buttons -->
-                <div class="action-buttons">
-                    <button id="backButton" class="btn btn--outline">↩️ Analyze Another</button>
-                    <button id="viewHistoryButton" class="btn btn--outline">📚 View History</button>
-                </div>
-            </section>
+<!-- PROMPT OUTPUT -->
+<div class="card">
+  <h3>✨ Improved Prompt</h3>
+  <pre id="promptBox"></pre>
+  <button onclick="copyPrompt()">Copy Prompt</button>
+</div>
 
-            <!-- History Section (Hidden by default) -->
-            <section id="historySection" class="history-section" style="display: none;">
-                <div class="card">
-                    <h2 class="card__title">📚 Prompt History</h2>
-                    
-                    <div id="historyStats" class="history-stats">
-                        <p>Loading history...</p>
-                    </div>
+<!-- AGENT MD -->
+<div class="card">
+  <h3>📄 agent.md</h3>
+  <pre id="agentBox"></pre>
+  <button onclick="copyAgent()">Copy Agent</button>
+</div>
 
-                    <div id="historyList" class="history-list">
-                        <!-- History items populated by JavaScript -->
-                    </div>
+<!-- STATS -->
+<div class="card">
+  <h3>📊 Optimization Stats</h3>
+  <p>🔢 Tokens Saved: <span id="tokens">0</span></p>
+  <p>💰 Cost Saved: <span id="cost">0</span></p>
+</div>
 
-                    <button id="backFromHistoryButton" class="btn btn--outline" style="margin-top: 1rem;">
-                        ← Back to Analyzer
-                    </button>
-                </div>
-            </section>
+<!-- HISTORY -->
+<div class="card">
+  <h3>📜 History</h3>
+  <div id="history"></div>
+</div>
 
-            <!-- Notification Area -->
-            <div id="notification" class="notification" style="display: none;"></div>
-        </div>
-    </main>
+</div>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <p>&copy; 2026 AI Prompt Optimizer. Built with Spring Boot & Vanilla JavaScript.</p>
-        </div>
-    </footer>
-
-    <!-- Scripts -->
-    <script src="script.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
