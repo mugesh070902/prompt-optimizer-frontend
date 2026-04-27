@@ -1,108 +1,427 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>AI Prompt Optimizer Dashboard</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PromptPilot | AI Prompt Optimizer</title>
+  <meta
+    name="description"
+    content="Professional AI Prompt Optimizer with quality score, comparison view, smart templates, requirement detection, and balanced layout."
+  />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <div class="bg-orb orb-1"></div>
+  <div class="bg-orb orb-2"></div>
+  <div class="bg-grid"></div>
 
-<header class="topbar">
-<h2>🚀 AI Prompt Optimizer</h2>
+  <div id="overlay" class="overlay" onclick="closeSidebar()"></div>
 
-<div class="top-actions">
-<span id="userName">User</span>
-<button onclick="logout()">Logout</button>
-</div>
-</header>
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-top">
+      <div class="sidebar-header">
+        <div class="brand">
+          <div class="brand-logo">P</div>
+          <div class="brand-text">
+            <h2>PromptPilot</h2>
+            <p>AI Prompt Optimizer</p>
+          </div>
+        </div>
+        <button class="close-btn" onclick="closeSidebar()">✕</button>
+      </div>
 
-<div class="container">
+      <button class="new-chat-btn" onclick="clearAll(); closeSidebar();">
+        + New Optimization
+      </button>
+    </div>
 
-<section class="card">
-<h2>Project Input</h2>
+    <div class="sidebar-section-title">Recent History</div>
+    <div id="historySidebar" class="history-sidebar">
+      <div class="empty-history">No history available yet.</div>
+    </div>
+  </aside>
 
-<textarea
-id="desc"
-placeholder="Describe your project..."
-></textarea>
+  <main class="main-content">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="menu-btn" onclick="openSidebar()" aria-label="Open history menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
 
-<div class="grid">
+        <div class="brand-inline">
+          <div class="brand-logo small">P</div>
+          <div class="brand-inline-text">
+            <h3>PromptPilot</h3>
+            <p>AI Prompt Optimization Suite</p>
+          </div>
+        </div>
+      </div>
 
-<select id="frontend">
-<option value="">Frontend</option>
-<option>React</option>
-<option>Angular</option>
-<option>Vue</option>
-<option>HTML/CSS/JS</option>
-<option>Next.js</option>
-</select>
+      <div class="topbar-right">
+        <button id="themeToggle" class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+          <span id="themeIcon">🌙</span>
+          <span id="themeText">Dark</span>
+        </button>
+        <div class="top-pill">SaaS UI</div>
+      </div>
+    </header>
 
-<select id="backend">
-<option value="">Backend</option>
-<option>Spring Boot</option>
-<option>Node.js</option>
-<option>Laravel</option>
-<option>FastAPI</option>
-</select>
+    <section class="hero-grid">
+      <div class="hero-main glass-card">
+        <div class="eyebrow">SMART PROMPT ENGINEERING</div>
+        <h1>Transform rough ideas into production-grade AI prompts</h1>
+        <p class="hero-text">
+          Generate improved prompts, compare outputs, score quality, detect missing requirements,
+          and export polished deliverables in one clean workflow.
+        </p>
 
-<select id="database">
-<option value="">Database</option>
-<option>MySQL</option>
-<option>PostgreSQL</option>
-<option>MongoDB</option>
-</select>
+        <div class="hero-tags">
+          <span>✨ Quality Score</span>
+          <span>🧠 AI Ready</span>
+          <span>📊 Compare Mode</span>
+          <span>📦 Export Tools</span>
+        </div>
+      </div>
 
-</div>
+      <div class="hero-stats glass-card">
+        <div class="mini-stat">
+          <div class="mini-icon">🗂️</div>
+          <div>
+            <p>Total Optimizations</p>
+            <h3 id="heroHistoryCount">0</h3>
+          </div>
+        </div>
 
-<button onclick="generate()" class="primary-btn">
-Generate
-</button>
+        <div class="mini-stat">
+          <div class="mini-icon">⚡</div>
+          <div>
+            <p>Saved Tokens</p>
+            <h3 id="heroTokenCount">0</h3>
+          </div>
+        </div>
 
-</section>
+        <div class="mini-stat">
+          <div class="mini-icon">💰</div>
+          <div>
+            <p>Saved Cost</p>
+            <h3 id="heroCostCount">$0.000000</h3>
+          </div>
+        </div>
+      </div>
+    </section>
 
+    <section class="main-grid">
+      <!-- LEFT -->
+      <div class="left-panel">
+        <div class="glass-card card-block">
+          <div class="card-head">
+            <div>
+              <p class="section-label">INPUT</p>
+              <h3>Project Brief</h3>
+            </div>
+            <div class="kbd-tip">Ctrl + Enter</div>
+          </div>
 
-<section class="card">
-<h2>✨ Improved Prompt</h2>
-<pre id="promptBox">Your optimized prompt will appear here...</pre>
+          <label for="desc" class="field-label">Describe your project</label>
+          <textarea
+            id="desc"
+            placeholder="Example: Build a scalable admin dashboard for a task automation platform with role-based access, analytics, integrations, and AI assistant support..."
+          ></textarea>
 
-<div class="btn-row">
-<button onclick="copyPrompt()">Copy Prompt</button>
-</div>
-</section>
+          <div class="template-box">
+            <div class="template-top">
+              <div>
+                <h4>Smart Project Templates</h4>
+                <p>Click a template to auto-fill your brief and tech stack.</p>
+              </div>
+            </div>
 
+            <div class="template-grid">
+              <button class="template-chip" onclick="applyTemplate('adminDashboard')">📊 Admin Dashboard</button>
+              <button class="template-chip" onclick="applyTemplate('ecommerce')">🛒 E-Commerce</button>
+              <button class="template-chip" onclick="applyTemplate('resumeAnalyzer')">📄 Resume Analyzer</button>
+              <button class="template-chip" onclick="applyTemplate('crm')">👥 CRM Tool</button>
+              <button class="template-chip" onclick="applyTemplate('ats')">🎯 ATS Platform</button>
+              <button class="template-chip" onclick="applyTemplate('studentManagement')">🏫 Student Management</button>
+            </div>
+          </div>
 
-<section class="card">
-<h2>📄 agent.md</h2>
-<pre id="agentBox">Generated agent instructions will appear here...</pre>
+          <div class="stack-grid">
+            <div class="field-group">
+              <label for="frontend">Frontend</label>
+              <div class="select-wrap">
+                <select id="frontend" onchange="updateStackBadges()">
+                  <option value="">Select frontend technology</option>
+                  <option>HTML/CSS/JS</option>
+                  <option>React</option>
+                  <option>Next.js</option>
+                  <option>Vue.js</option>
+                  <option>Nuxt.js</option>
+                  <option>Angular</option>
+                  <option>Svelte</option>
+                  <option>SvelteKit</option>
+                  <option>TypeScript</option>
+                  <option>Tailwind CSS</option>
+                  <option>Bootstrap</option>
+                  <option>Material UI</option>
+                  <option>ShadCN UI</option>
+                  <option>Chakra UI</option>
+                  <option>Redux</option>
+                  <option>Zustand</option>
+                  <option>jQuery</option>
+                  <option>Flutter Web</option>
+                </select>
+              </div>
+            </div>
 
-<div class="btn-row">
-<button onclick="copyAgent()">Copy Agent</button>
-<button onclick="downloadAgent()">Download agent.md</button>
-</div>
-</section>
+            <div class="field-group">
+              <label for="backend">Backend</label>
+              <div class="select-wrap">
+                <select id="backend" onchange="updateStackBadges()">
+                  <option value="">Select backend technology</option>
+                  <option>Spring Boot</option>
+                  <option>Java Servlet/JSP</option>
+                  <option>Node.js</option>
+                  <option>Express.js</option>
+                  <option>NestJS</option>
+                  <option>Python Flask</option>
+                  <option>Python Django</option>
+                  <option>FastAPI</option>
+                  <option>PHP</option>
+                  <option>Laravel</option>
+                  <option>CodeIgniter</option>
+                  <option>ASP.NET Core</option>
+                  <option>C# Web API</option>
+                  <option>Ruby on Rails</option>
+                  <option>Go Fiber</option>
+                  <option>Go Gin</option>
+                  <option>Kotlin Ktor</option>
+                  <option>Firebase</option>
+                  <option>Supabase</option>
+                </select>
+              </div>
+            </div>
 
+            <div class="field-group">
+              <label for="database">Database</label>
+              <div class="select-wrap">
+                <select id="database" onchange="updateStackBadges()">
+                  <option value="">Select database technology</option>
+                  <option>MySQL</option>
+                  <option>PostgreSQL</option>
+                  <option>MongoDB</option>
+                  <option>MariaDB</option>
+                  <option>SQLite</option>
+                  <option>Oracle</option>
+                  <option>Microsoft SQL Server</option>
+                  <option>Firebase Firestore</option>
+                  <option>Supabase PostgreSQL</option>
+                  <option>Redis</option>
+                  <option>Cassandra</option>
+                  <option>DynamoDB</option>
+                  <option>Neo4j</option>
+                  <option>CouchDB</option>
+                </select>
+              </div>
+            </div>
+          </div>
 
-<section class="card stats-grid">
-<div class="stat-box">
-<h3>Tokens Saved</h3>
-<p id="tokens">0</p>
-</div>
+          <div class="badge-box">
+            <div id="stackBadges" class="stack-badges">
+              <div class="empty-badge">Selected stack badges will appear here...</div>
+            </div>
+          </div>
 
-<div class="stat-box">
-<h3>Cost Saved</h3>
-<p id="cost">0.000000</p>
-</div>
-</section>
+          <div class="action-row">
+            <button id="generateBtn" class="primary-btn" onclick="generate()">
+              <span class="btn-text">Generate Optimized Output</span>
+              <span class="btn-loader hidden"></span>
+            </button>
+            <button class="secondary-btn" onclick="clearAll()">Clear</button>
+          </div>
 
+          <div class="helper-note">
+            Tip: Mention business goal, users, roles, features, integrations, and expected deliverables.
+          </div>
+        </div>
 
-<section class="card">
-<h2>📜 My History</h2>
-<div id="history"></div>
-</section>
+        <div class="stats-row">
+          <div class="glass-card stat-card">
+            <div class="stat-icon">⚡</div>
+            <p>Tokens Saved</p>
+            <h3 id="tokens">0</h3>
+            <span>Optimization efficiency</span>
+          </div>
 
-</div>
+          <div class="glass-card stat-card">
+            <div class="stat-icon">💸</div>
+            <p>Estimated Cost Saved</p>
+            <h3 id="cost">0.000000</h3>
+            <span>Approximate savings</span>
+          </div>
 
-<script src="script.js"></script>
+          <div class="glass-card stat-card">
+            <div class="stat-icon">✅</div>
+            <p>Output Status</p>
+            <h3 id="statusText">Ready</h3>
+            <span id="statusSubtext">Waiting for input</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT -->
+      <div class="right-panel">
+        <div class="glass-card card-block">
+          <div class="tab-buttons">
+            <button class="tab-btn active" onclick="switchTab('promptTab', this)">✨ Prompt</button>
+            <button class="tab-btn" onclick="switchTab('agentTab', this)">📄 agent.md</button>
+            <button class="tab-btn" onclick="switchTab('compareTab', this)">📊 Compare</button>
+            <button class="tab-btn" onclick="switchTab('insightTab', this)">🧠 Insights</button>
+          </div>
+
+          <div id="promptTab" class="tab-panel active">
+            <div class="tab-head">
+              <div>
+                <p class="section-label">OUTPUT</p>
+                <h3>Improved Prompt</h3>
+              </div>
+              <div class="export-actions">
+                <button class="icon-btn" onclick="copyPrompt()">Copy</button>
+                <button class="icon-btn" onclick="exportContent('prompt', 'txt')">TXT</button>
+                <button class="icon-btn" onclick="exportContent('prompt', 'md')">MD</button>
+              </div>
+            </div>
+            <pre id="promptBox">Your optimized prompt will appear here...</pre>
+          </div>
+
+          <div id="agentTab" class="tab-panel">
+            <div class="tab-head">
+              <div>
+                <p class="section-label">DOCUMENT</p>
+                <h3>agent.md</h3>
+              </div>
+              <div class="export-actions">
+                <button class="icon-btn" onclick="copyAgent()">Copy</button>
+                <button class="icon-btn" onclick="exportContent('agent', 'txt')">TXT</button>
+                <button class="icon-btn" onclick="exportContent('agent', 'md')">MD</button>
+              </div>
+            </div>
+            <pre id="agentBox">Generated agent instructions will appear here...</pre>
+          </div>
+
+          <div id="compareTab" class="tab-panel">
+            <div class="tab-head">
+              <div>
+                <p class="section-label">COMPARE</p>
+                <h3>Original vs Optimized</h3>
+              </div>
+            </div>
+
+            <div class="compare-grid">
+              <div class="compare-box">
+                <h4>Original Input</h4>
+                <pre id="originalBox">Your original project description will appear here...</pre>
+              </div>
+
+              <div class="compare-box">
+                <h4>Optimized Output</h4>
+                <pre id="optimizedCompareBox">Your optimized prompt will appear here...</pre>
+              </div>
+            </div>
+          </div>
+
+          <div id="insightTab" class="tab-panel">
+            <div class="tab-head">
+              <div>
+                <p class="section-label">INSIGHTS</p>
+                <h3>Optimization Insights</h3>
+              </div>
+            </div>
+
+            <div id="insightBox" class="insight-list">
+              <div class="empty-block">Optimization insights will appear here...</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="glass-card card-block">
+          <div class="card-head">
+            <div>
+              <p class="section-label">SCORE</p>
+              <h3>Prompt Quality Score</h3>
+            </div>
+            <div id="overallScoreBadge" class="score-badge">0/100</div>
+          </div>
+
+          <div class="score-grid">
+            <div class="score-item">
+              <div class="score-head">
+                <span>📝 Clarity</span>
+                <span id="clarityScore">0</span>
+              </div>
+              <div class="progress-bar"><div id="clarityBar" class="progress-fill"></div></div>
+            </div>
+
+            <div class="score-item">
+              <div class="score-head">
+                <span>⚙️ Technical Depth</span>
+                <span id="technicalScore">0</span>
+              </div>
+              <div class="progress-bar"><div id="technicalBar" class="progress-fill"></div></div>
+            </div>
+
+            <div class="score-item">
+              <div class="score-head">
+                <span>🏢 Business Context</span>
+                <span id="businessScore">0</span>
+              </div>
+              <div class="progress-bar"><div id="businessBar" class="progress-fill"></div></div>
+            </div>
+
+            <div class="score-item">
+              <div class="score-head">
+                <span>♻️ Reusability</span>
+                <span id="reuseScore">0</span>
+              </div>
+              <div class="progress-bar"><div id="reuseBar" class="progress-fill"></div></div>
+            </div>
+
+            <div class="score-item">
+              <div class="score-head">
+                <span>🤖 AI Readiness</span>
+                <span id="aiScore">0</span>
+              </div>
+              <div class="progress-bar"><div id="aiBar" class="progress-fill"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="glass-card card-block">
+          <div class="card-head">
+            <div>
+              <p class="section-label">ANALYSIS</p>
+              <h3>Missing Requirement Detector</h3>
+            </div>
+          </div>
+
+          <div id="missingRequirements" class="detector-list">
+            <div class="empty-block">Missing requirement insights will appear here...</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="toast" class="toast">Copied successfully</div>
+
+  <script src="script.js"></script>
 </body>
 </html>
