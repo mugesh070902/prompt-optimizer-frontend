@@ -2,70 +2,104 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI Prompt Optimizer</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>AI Prompt Optimizer Dashboard</title>
 <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
+
+<header class="topbar">
+<h2>🚀 AI Prompt Optimizer</h2>
+
+<div class="top-actions">
+<span id="userName">User</span>
+<button onclick="logout()">Logout</button>
+</div>
+</header>
 
 <div class="container">
 
-<h1>🚀 AI Prompt Optimizer</h1>
+<section class="card">
+<h2>Project Input</h2>
 
-<!-- INPUT -->
-<div class="card">
-  <textarea id="desc" placeholder="Describe your project..."></textarea>
+<textarea
+id="desc"
+placeholder="Describe your project..."
+></textarea>
 
-  <div class="grid">
-    <select id="frontend">
-      <option value="">Frontend</option>
-      <option>React</option>
-      <option>HTML/CSS/JS</option>
-    </select>
+<div class="grid">
 
-    <select id="backend">
-      <option value="">Backend</option>
-      <option>Spring Boot</option>
-      <option>Node.js</option>
-    </select>
+<select id="frontend">
+<option value="">Frontend</option>
+<option>React</option>
+<option>Angular</option>
+<option>Vue</option>
+<option>HTML/CSS/JS</option>
+<option>Next.js</option>
+</select>
 
-    <select id="database">
-      <option value="">Database</option>
-      <option>MySQL</option>
-      <option>MongoDB</option>
-    </select>
-  </div>
+<select id="backend">
+<option value="">Backend</option>
+<option>Spring Boot</option>
+<option>Node.js</option>
+<option>Laravel</option>
+<option>FastAPI</option>
+</select>
 
-  <button onclick="generate()">Generate</button>
+<select id="database">
+<option value="">Database</option>
+<option>MySQL</option>
+<option>PostgreSQL</option>
+<option>MongoDB</option>
+</select>
+
 </div>
 
-<!-- PROMPT OUTPUT -->
-<div class="card">
-  <h3>✨ Improved Prompt</h3>
-  <pre id="promptBox"></pre>
-  <button onclick="copyPrompt()">Copy Prompt</button>
+<button onclick="generate()" class="primary-btn">
+Generate
+</button>
+
+</section>
+
+
+<section class="card">
+<h2>✨ Improved Prompt</h2>
+<pre id="promptBox">Your optimized prompt will appear here...</pre>
+
+<div class="btn-row">
+<button onclick="copyPrompt()">Copy Prompt</button>
+</div>
+</section>
+
+
+<section class="card">
+<h2>📄 agent.md</h2>
+<pre id="agentBox">Generated agent instructions will appear here...</pre>
+
+<div class="btn-row">
+<button onclick="copyAgent()">Copy Agent</button>
+<button onclick="downloadAgent()">Download agent.md</button>
+</div>
+</section>
+
+
+<section class="card stats-grid">
+<div class="stat-box">
+<h3>Tokens Saved</h3>
+<p id="tokens">0</p>
 </div>
 
-<!-- AGENT MD -->
-<div class="card">
-  <h3>📄 agent.md</h3>
-  <pre id="agentBox"></pre>
-  <button onclick="copyAgent()">Copy Agent</button>
+<div class="stat-box">
+<h3>Cost Saved</h3>
+<p id="cost">0.000000</p>
 </div>
+</section>
 
-<!-- STATS -->
-<div class="card">
-  <h3>📊 Optimization Stats</h3>
-  <p>🔢 Tokens Saved: <span id="tokens">0</span></p>
-  <p>💰 Cost Saved: <span id="cost">0</span></p>
-</div>
 
-<!-- HISTORY -->
-<div class="card">
-  <h3>📜 History</h3>
-  <div id="history"></div>
-</div>
+<section class="card">
+<h2>📜 My History</h2>
+<div id="history"></div>
+</section>
 
 </div>
 
