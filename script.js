@@ -1,474 +1,324 @@
-/* =========================
-   CONFIG
-========================= */
-
-const API_BASE = "https://prompt-optimizer-d29x.onrender.com/api";
-const AUTH_API = "https://prompt-optimizer-d29x.onrender.com/api/auth";
+const API_BASE="https://prompt-optimizer-d29x.onrender.com/api";
+const AUTH_API="https://prompt-optimizer-d29x.onrender.com/api/auth";
 
 
 /* =========================
-   AUTH GUARD
+AUTH GUARD
 ========================= */
 
-function requireLogin() {
+(function(){
+const isLoginPage=
+window.location.pathname.includes("login.html");
 
- const publicPage =
-   window.location.pathname.includes("login.html");
-
- if(!localStorage.getItem("token") && !publicPage){
-     window.location.href="login.html";
- }
-
+if(!isLoginPage && !localStorage.getItem("token")){
+window.location="login.html";
 }
-
-requireLogin();
+})();
 
 
 /* =========================
-   SIGNUP
+SIGNUP
 ========================= */
 
 async function signup(){
 
- try{
+try{
 
- const name=
- document.getElementById("name").value.trim();
+const name=document.getElementById("name").value.trim();
+const email=document.getElementById("email").value.trim();
+const password=document.getElementById("password").value.trim();
 
- const email=
- document.getElementById("email").value.trim();
+if(!name||!email||!password){
+alert("Fill all fields");
+return;
+}
 
- const password=
- document.getElementById("password").value.trim();
+const res=await fetch(`${AUTH_API}/signup`,{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+name,
+email,
+password
+})
+});
 
+alert(await res.text());
 
- if(!name || !email || !password){
-   alert("Fill all fields");
-   return;
- }
-
-
- const res=
- await fetch(`${AUTH_API}/signup`,{
-
- method:"POST",
-
- headers:{
- "Content-Type":"application/json"
- },
-
- body:JSON.stringify({
-   name:name,
-   email:email,
-   password:password
- })
-
- });
-
-
- const msg=await res.text();
-
- alert(msg);
-
- }
- catch(e){
-
- alert("Signup failed");
-
- console.error(e);
-
- }
+}catch(e){
+console.error(e);
+alert("Signup failed");
+}
 
 }
 
 
-
 /* =========================
-   LOGIN
+LOGIN
 ========================= */
 
 async function login(){
 
- try{
+try{
 
- const email=
- document.getElementById("email").value.trim();
+const email=document.getElementById("email").value.trim();
+const password=document.getElementById("password").value.trim();
 
- const password=
- document.getElementById("password").value.trim();
+const res=await fetch(`${AUTH_API}/login`,{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+email,
+password
+})
+});
 
+const data=await res.json();
 
- const res=
- await fetch(`${AUTH_API}/login`,{
+if(data.token){
 
- method:"POST",
+localStorage.setItem(
+"token",
+data.token
+);
 
- headers:{
- "Content-Type":"application/json"
- },
+localStorage.setItem(
+"userName",
+data.name||"User"
+);
 
- body:JSON.stringify({
- email:email,
- password:password
- })
+window.location="index.html";
 
- });
+}else{
+alert("Invalid credentials");
+}
 
-
- const data=
- await res.json();
-
-
- if(data.token){
-
- localStorage.setItem(
- "token",
- data.token
- );
-
- localStorage.setItem(
- "userName",
- data.name || "User"
- );
-
- alert("Login Success");
-
- window.location.href="index.html";
-
- }
-
- else{
-
- alert("Invalid credentials");
-
- }
-
- }
- catch(e){
-
- console.error(e);
-
- alert("Login failed");
-
- }
+}catch(e){
+console.error(e);
+alert("Login failed");
+}
 
 }
 
 
-
 /* =========================
-   LOGOUT
+LOGOUT
 ========================= */
 
 function logout(){
-
- localStorage.removeItem("token");
- localStorage.removeItem("userName");
-
- window.location.href="login.html";
-
+localStorage.clear();
+window.location="login.html";
 }
 
 
-
 /* =========================
-   GENERATE PROMPT
+GENERATE
 ========================= */
 
 async function generate(){
 
- const desc=
- document.getElementById("desc").value;
+const desc=document.getElementById("desc").value;
+const frontend=document.getElementById("frontend").value;
+const backend=document.getElementById("backend").value;
+const database=document.getElementById("database").value;
 
- const frontend=
- document.getElementById("frontend").value;
+if(!desc){
+alert("Enter project description");
+return;
+}
 
- const backend=
- document.getElementById("backend").value;
+document.getElementById(
+"promptBox"
+).innerText="Generating...";
 
- const database=
- document.getElementById("database").value;
+try{
 
+const res=await fetch(
+`${API_BASE}/analyze`,
+{
+method:"POST",
+headers:{
+"Content-Type":"application/json",
+"Authorization":"Bearer "+localStorage.getItem("token")
+},
+body:JSON.stringify({
+desc,
+frontend,
+backend,
+database
+})
+}
+);
 
+if(!res.ok){
+throw new Error(
+"Server error "+res.status
+);
+}
 
- document.getElementById(
- "promptBox"
- ).innerText=
- "⏳ Generating...";
+const data=await res.json();
 
+document.getElementById(
+"promptBox"
+).innerText=
+data.improvedPrompt||"No prompt";
 
- document.getElementById(
- "agentBox"
- ).innerText="";
+document.getElementById(
+"agentBox"
+).innerText=
+data.agentMd||"No agent";
 
+document.getElementById(
+"tokens"
+).innerText=
+data.savedTokens||0;
 
- try{
+document.getElementById(
+"cost"
+).innerText=
+Number(
+data.savedCost||0
+).toFixed(6);
 
- const res=
- await fetch(
- `${API_BASE}/analyze`,
- {
+loadHistory();
 
- method:"POST",
-
- headers:{
- "Content-Type":"application/json",
-
- "Authorization":
- "Bearer "+
- localStorage.getItem("token")
- },
-
- body:JSON.stringify({
-
- desc:desc,
- frontend:frontend,
- backend:backend,
- database:database
-
- })
-
- });
-
-
- if(!res.ok){
- throw new Error(
- "Server Error "+res.status
- );
- }
-
-
- const data=
- await res.json();
-
-
- console.log(data);
-
-
- document.getElementById(
- "promptBox"
- ).innerText=
- data.improvedPrompt ||
- "No Prompt";
-
-
- document.getElementById(
- "agentBox"
- ).innerText=
- data.agentMd ||
- "No agent.md";
-
-
- document.getElementById(
- "tokens"
- ).innerText=
- data.savedTokens || 0;
-
-
- document.getElementById(
- "cost"
- ).innerText=
- data.savedCost
- ? Number(
- data.savedCost
- ).toFixed(6)
- : "0.000000";
-
-
- loadHistory();
-
- }
-
- catch(e){
-
- console.error(e);
-
- document.getElementById(
- "promptBox"
- ).innerText=
- "❌ "+e.message;
-
- }
+}catch(e){
+console.error(e);
+document.getElementById(
+"promptBox"
+).innerText=
+"Error: "+e.message;
+}
 
 }
 
 
-
 /* =========================
-   HISTORY
+LOAD HISTORY
 ========================= */
 
 async function loadHistory(){
 
- const box=
- document.getElementById(
- "history"
- );
+const box=
+document.getElementById(
+"history"
+);
 
+if(!box) return;
 
- if(!box) return;
+try{
 
+const res=await fetch(
+`${API_BASE}/history`,
+{
+headers:{
+"Authorization":"Bearer "+
+localStorage.getItem("token")
+}
+}
+);
 
- try{
+const data=await res.json();
 
- const res=
- await fetch(
- `${API_BASE}/history`,
- {
+box.innerHTML="";
 
- headers:{
- "Authorization":
- "Bearer "+
- localStorage.getItem("token")
- }
+if(!data.length){
+box.innerHTML="<p>No history yet</p>";
+return;
+}
 
- });
+data.reverse().forEach(item=>{
 
- const data=
- await res.json();
+box.innerHTML+=`
+<div class='history-item'>
+<b>Prompt:</b>
+${item.prompt||"N/A"}
+<br>
+<b>Tokens:</b>
+${item.optimizedTokens||0}
+</div>
+`;
 
+});
 
- box.innerHTML="";
-
-
- if(!data.length){
-
- box.innerHTML=
- "<p>No History Yet</p>";
-
- return;
- }
-
-
- data.reverse().forEach(item=>{
-
- box.innerHTML+=`
-
- <div class="history-item">
-
- <b>Prompt:</b>
- ${item.prompt || "N/A"}
-
- <br>
-
- <b>Tokens:</b>
- ${item.optimizedTokens || 0}
-
- </div>
-
- `;
-
- });
-
- }
-
- catch(e){
-
- console.error(
- "History error",
- e
- );
-
- }
+}catch(e){
+console.error(e);
+}
 
 }
 
 
-
 /* =========================
-   COPY
+COPY
 ========================= */
 
 function copyPrompt(){
 
- navigator.clipboard.writeText(
- document.getElementById(
- "promptBox"
- ).innerText
- );
+navigator.clipboard.writeText(
+document.getElementById(
+"promptBox"
+).innerText
+);
 
- alert("Prompt copied");
+alert("Prompt copied");
 
 }
 
 
 function copyAgent(){
 
- navigator.clipboard.writeText(
- document.getElementById(
- "agentBox"
- ).innerText
- );
+navigator.clipboard.writeText(
+document.getElementById(
+"agentBox"
+).innerText
+);
 
- alert("Agent copied");
+alert("Agent copied");
 
 }
 
 
-
 /* =========================
-   EXPORT AGENT MD
+DOWNLOAD MD
 ========================= */
 
 function downloadAgent(){
 
- const text=
- document.getElementById(
- "agentBox"
- ).innerText;
+const text=
+document.getElementById(
+"agentBox"
+).innerText;
 
+const blob=
+new Blob(
+[text],
+{type:"text/markdown"}
+);
 
- const blob=
- new Blob(
- [text],
- {type:"text/markdown"}
- );
-
-
- const a=
- document.createElement("a");
-
- a.href=
- URL.createObjectURL(blob);
-
- a.download=
- "agent.md";
-
- a.click();
+const a=
+document.createElement("a");
+a.href=URL.createObjectURL(blob);
+a.download="agent.md";
+a.click();
 
 }
 
 
-
 /* =========================
-   USER DISPLAY
+LOAD USER
 ========================= */
 
 function loadUser(){
-
- let name=
- localStorage.getItem(
- "userName"
- );
-
- let userBox=
- document.getElementById(
- "userName"
- );
-
- if(userBox){
- userBox.innerText=
- name || "User";
- }
-
+const user=document.getElementById("userName");
+if(user){
+user.innerText=
+localStorage.getItem("userName")||"User";
+}
 }
 
 loadUser();
-
-
-
-/* =========================
-   AUTO LOAD HISTORY
-========================= */
-
 loadHistory();
