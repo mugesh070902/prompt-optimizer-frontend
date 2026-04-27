@@ -1,33 +1,36 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Login</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Prompt Optimizer Login</title>
+<link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="auth-body">
 
-<div class="card">
-  <h2>🔐 Login</h2>
+<div class="auth-container">
 
-  <input type="text" id="username" placeholder="Username">
-  <input type="password" id="password" placeholder="Password">
+<div class="auth-card">
+<h1>🚀 AI Prompt Optimizer</h1>
+<p class="sub">Login / Signup</p>
 
-  <button onclick="login()">Login</button>
+<input id="name" type="text" placeholder="Name (for signup)">
+<input id="email" type="email" placeholder="Email">
+<input id="password" type="password" placeholder="Password">
+
+<div class="auth-actions">
+<button onclick="signup()">Sign Up</button>
+<button onclick="login()">Login</button>
 </div>
 
-<script>
-function login() {
-  const user = document.getElementById("username").value;
-  const pass = document.getElementById("password").value;
+<p class="small-note">
+Use Sign Up once, then Login.
+</p>
 
-  if (user === "admin" && pass === "1234") {
-    localStorage.setItem("user", user);
-    window.location.href = "index.html";
-  } else {
-    alert("Invalid credentials");
-  }
-}
-</script>
+</div>
 
+</div>
+
+<script src="script.js"></script>
 </body>
 </html>
